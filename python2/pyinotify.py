@@ -2101,6 +2101,13 @@ class WatchManager:
         if watch_ is not None:
             return watch_.path
 
+    @staticmethod
+    def __file_error(exception):
+        """
+        Prints an error if the walk fails on a specific file
+        """
+        print "Unable to walk %s" % repr(exception.filename)
+
     def __walk_rec(self, top, rec):
         """
         Yields each subdirectories of top, doesn't follow symlinks.
@@ -2116,7 +2123,7 @@ class WatchManager:
         if not rec or os.path.islink(top) or not os.path.isdir(top):
             yield top
         else:
-            for root, dirs, files in os.walk(top):
+            for root, dirs, files in os.walk(top, onerror=__file_error):
                 yield root
 
     def rm_watch(self, wd, rec=False, quiet=True):
